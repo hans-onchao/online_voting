@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cast Your Vote</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+    <header>
+        <h1>Cast Your Vote</h1>
+        <form action="login.php" method="post">
+            <input type="submit" value="Logout" class="logout-button">
+        </form>
+    </header>
+
+    <div class="container">
+        <p>Please select a category to cast your vote:</p>
+        <div class="category-links">
+            <a class="category-link" href="#presidential">
+                <span></span>
+                Presidential
+            </a>
+        </div>
+
+        <div class="candidates-section" id="presidential-section">
+            <div class="candidate">
+                <img src="can1.jpg" alt="Candidate 1">
+                <div class="candidate-info">
+                    <h2>LUFFY</h2>
+                    <button class="vote-button" data-candidate="LUFFY">Vote</button>
+                </div>
+            </div>
+
+            <div class="candidate">
+                <img src="can2.jpg" alt="Candidate 2">
+                <div class="candidate-info">
+                    <h2>TRAFALGAR</h2>
+                    <button class="vote-button" data-candidate="TRAFALGAR">Vote</button>
+                </div>
+            </div>
+
+            <div class="candidate">
+                <img src="can8.jpg" alt="Candidate 3">
+                <div class="candidate-info">
+                    <h2>ZORO</h2>
+                    <button class="vote-button" data-candidate="ZORO">Vote</button>
+                </div>
+            </div>
+
+            <div class="candidate">
+                <img src="can4.jpg" alt="Candidate 4">
+                <div class="candidate-info">
+                    <h2>SANJI</h2>
+                    <button class="vote-button" data-candidate="SANJI">Vote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categoryLinks = document.querySelectorAll('.category-link');
+        const candidatesSections = document.querySelectorAll('.candidates-section');
+
+        categoryLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                candidatesSections.forEach(section => section.style.display = 'none');
+
+                const targetSectionId = link.getAttribute('href').substring(1) + '-section';
+                const targetSection = document.getElementById(targetSectionId);
+                targetSection.style.display = 'block';
+
+                categoryLinks.forEach(link => link.classList.remove('active'));
+
+                link.classList.add('active');
+            });
+        });
+
+        // JavaScript for voting using AJAX
+        document.querySelectorAll('.vote-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const candidateName = this.getAttribute('data-candidate');
+                const hasVoted = sessionStorage.getItem('has_voted');
+
+                if (hasVoted) {
+                    alert('You have already voted.');
+                } else {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'count.php',
+                        data: { candidate: candidateName },
+                        success: function (response) {
+                            alert('Vote submitted successfully.');
+                            sessionStorage.setItem('has_voted', 'true'); // Set session variable to prevent multiple votes
+                        },
+                        error: function () {
+                            alert('An error occurred while processing your vote.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>
